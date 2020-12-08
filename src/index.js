@@ -43,20 +43,20 @@ class ServerlessV2AWSDocumentation {
     this.documentationParts = [];
 
     this.commands = {
-        downloadDocumentation: {
-            usage: 'Download API Gateway documentation from AWS',
-            lifecycleEvents: [
-              'downloadDocumentation',
-            ],
-            options: {
-                outputFileName: {
-                  required: true,
-                },
-                extensions: {
-                    required: false,
-                },
-            },
-        }
+      downloadDocumentation: {
+        usage: 'Download API Gateway documentation from AWS',
+        lifecycleEvents: [
+          'downloadDocumentation',
+        ],
+        options: {
+          outputFileName: {
+            required: true,
+          },
+          extensions: {
+              required: false,
+          },
+        },
+      }
     };
   }
 
