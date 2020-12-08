@@ -1,8 +1,6 @@
+**Important note about the original author**
 This repository has been forked from https://github.com/deliveryhero/serverless-aws-documentation
-
-**Original author:**
-[Simon Jentsch](https://twitter.com/tchockie)",
-[GitHub](https://github.com/deliveryhero)
+[Simon Jentsch](https://twitter.com/tchockie),
 
 # Serverless V2 AWS Documentation
 

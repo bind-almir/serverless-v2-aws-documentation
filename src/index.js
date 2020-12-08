@@ -5,12 +5,20 @@ const swagger = require('./swagger');
 const fs = require('fs');
 const downloadDocumentation = require('./downloadDocumentation');
 
-class ServerlessAWSDocumentation {
+class ServerlessV2AWSDocumentation {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.options = options;
     this.provider = 'aws';
     this.fs = fs;
+
+    // Create schema for your properties. For reference use https://github.com/ajv-validator/ajv
+    serverless.configSchemaHandler.defineFunctionEventProperties('aws', 'http', {
+      properties: {
+        documentation: { type: 'object' },
+      },
+      required: ['documentation'],
+    });
 
     Object.assign(this, models);
     Object.assign(this, swagger);
@@ -195,4 +203,4 @@ class ServerlessAWSDocumentation {
 
 }
 
-module.exports = ServerlessAWSDocumentation;
+module.exports = ServerlessV2AWSDocumentation;
