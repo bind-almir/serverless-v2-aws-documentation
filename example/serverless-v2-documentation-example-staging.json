@@ -1,0 +1,174 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Some example API",
+    "version" : "2020-12-08T12:59:24Z",
+    "title" : "serverless-v2-documentation-example-staging",
+    "termsOfService" : "https://www.google.com",
+    "contact" : {
+      "name" : "The contact person",
+      "url" : "https://www.serverless.com/framework",
+      "email" : "some-fake@email.com"
+    },
+    "license" : {
+      "name" : "The license",
+      "url" : "https://www.github.com"
+    }
+  },
+  "host" : "5rgmj6h0ei.execute-api.eu-west-1.amazonaws.com",
+  "basePath" : "/staging",
+  "tags" : [ {
+    "name" : "Tag1",
+    "description" : "The first tag"
+  }, {
+    "name" : "Tag2",
+    "description" : "That other tag that we all love"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/example/do-something" : {
+      "post" : {
+        "tags" : [ "Tag2" ],
+        "summary" : "Takes a request body",
+        "description" : "Demonstrates a POST method. We show a request body here and have multiple response models.",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "DoSomethingRequest",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/DoSomethingRequest"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/DoSomethingResponse"
+            }
+          },
+          "400" : {
+            "description" : "400 response",
+            "schema" : {
+              "$ref" : "#/definitions/400JsonResponse"
+            }
+          }
+        }
+      },
+      "options" : {
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/example/message" : {
+      "get" : {
+        "tags" : [ "Tag1" ],
+        "summary" : "Gets a simple message",
+        "description" : "Demonstrates a GET method. You can see query string parameters, request headers, response body and response headers.\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "secondParam",
+          "in" : "query",
+          "description" : "The second param. This one is optional",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "firstParam",
+          "in" : "query",
+          "description" : "The first param that we want, you MUST pass it",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "schema" : {
+              "$ref" : "#/definitions/MessageResponse"
+            },
+            "headers" : {
+              "link" : {
+                "type" : "string",
+                "description" : "describes other actions that can be taken"
+              }
+            }
+          }
+        }
+      },
+      "options" : {
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "200 response",
+            "headers" : {
+              "Access-Control-Allow-Origin" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Methods" : {
+                "type" : "string"
+              },
+              "Access-Control-Allow-Headers" : {
+                "type" : "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "400JsonResponse" : {
+      "type" : "object",
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        },
+        "statusCode" : {
+          "type" : "number"
+        }
+      }
+    },
+    "DoSomethingResponse" : {
+      "type" : "object",
+      "properties" : {
+        "result" : {
+          "type" : "string"
+        },
+        "submittedItems" : {
+          "type" : "number"
+        }
+      }
+    },
+    "DoSomethingRequest" : {
+      "type" : "array",
+      "items" : {
+        "type" : "string"
+      }
+    },
+    "MessageResponse" : {
+      "type" : "object",
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}

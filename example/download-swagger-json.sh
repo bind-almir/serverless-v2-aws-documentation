@@ -1,12 +1,30 @@
-#!/usr/bin/env bash
+#!/bin/bash
 # Downloads the JSON Swagger document
 cd `dirname $0`
 set -e
-stage=dev
-region=us-east-1 # must match serverless.yml:provider.region
-apiId=`bash -c "aws apigateway get-rest-apis --output=json --region=$region | /usr/bin/env node ./extract-rest-api-id.js $stage"`
+stage="staging"
+region="eu-west-1" # must match serverless.yml:provider.region
+
+apiId=""
+
+json=$(aws apigateway get-rest-apis --region $region)
+
+for row in $(echo "${json}" | jq -r '.items[] | @base64'); do
+  _jq() {
+    echo ${row} | base64 --decode | jq -r ${1}
+  }
+
+  if [ $(_jq '.name') = serverless-v2-documentation-example-$stage ]
+  then
+    apiId=$(_jq '.id') 
+    echo $id
+  fi
+done
+
+
 fileType=json
-outputFileName=serverless-aws-documentation-example-$STAGE.$fileType
+
+outputFileName=serverless-v2-documentation-example-$stage.$fileType
 printf "Downloading Swagger definition to ./$outputFileName
   API ID: $apiId
    Stage: $stage

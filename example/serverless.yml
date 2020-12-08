@@ -1,20 +1,16 @@
-service: serverless-aws-documentation-example
+service: serverless-v2-documentation-example
 
 provider:
   name: aws
-  runtime: nodejs6.10
-  region: us-east-1
+  runtime: nodejs12.x
+  region: eu-west-1 
+  stage: staging
+  apiGateway: 
+    shouldStartNameWithService: true
 
 # Remember to reference the plugin
 plugins:
-  - serverless-aws-documentation
-
-# Let's keep this deployment lightweight. Probably not something you should copy
-package:
-  exclude:
-    - ./**
-  include:
-    - handler.js
+  - serverless-v2-aws-documentation
 
 custom:
   # You must have the documentation object
