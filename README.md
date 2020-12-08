@@ -1,6 +1,8 @@
 This repository has been forked from https://github.com/deliveryhero/serverless-aws-documentation
+
 **Original author:**
-https://github.com/deliveryhero
+[Simon Jentsch](https://twitter.com/tchockie)",
+[GitHub](https://github.com/deliveryhero)
 
 # Serverless V2 AWS Documentation
 
@@ -16,21 +18,21 @@ In addition to this documentation this plugin also adds support to add models to
 
 ## Install
 
-This plugin only works for Serverless 1.0 and up. For a plugin that supports 0.5 look at
-[this plugin](https://github.com/HyperBrain/serverless-models-plugin).
+This plugin only works for Serverless 2.0 and up. For a plugin that supports 1.0 look at
+[this plugin](https://github.com/deliveryhero).
 
-To install this plugin, add `serverless-aws-documentation` to your package.json:
+To install this plugin, add `serverless-v2-aws-documentation` to your package.json:
 
 ```
-npm install serverless-aws-documentation --save-dev
+npm install serverless-v2-aws-documentation --save-dev
 ```
 
-Next, add the `serverless-aws-documentation` plugin in to serverless.yml file:
+Next, add the `serverless-v2-aws-documentation` plugin in to serverless.yml file:
 If you don't already have a plugins section, create one that looks like this:
 
 ```YAML
 plugins:
-  - serverless-aws-documentation
+  - serverless-v2-aws-documentation
 ```
 
 To verify that the plugin was added successfully, run this in your command line:
