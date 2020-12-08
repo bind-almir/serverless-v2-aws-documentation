@@ -5,8 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "codecov": "cat coverage/*/lcov.info | codecov",
-    "test": "istanbul cover -x \"src/index.spec.js\" jasmine ./src/index.spec.js ./src/documentation.spec.js ./src/models.spec.js ./src/downloadDocumentation.spec.js",
-    "test:nocoverage": "jasmine ./src/index.spec.js"
+    "test": "istanbul cover -x \"tests/index.spec.js\" jasmine ./tests/index.spec.js ./tests/documentation.spec.js ./tests/models.spec.js ./tests/downloadDocumentation.spec.js",
+    "test:nocoverage": "jasmine ./tests/index.spec.js"
   },
   "repository": "bind-almir/serverless-v2-aws-documentation",
   "author": "Almir Zulic <almir@bind.ba> (https://twitter.com/bind_almir)",

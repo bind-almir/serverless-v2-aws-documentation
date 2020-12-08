@@ -1,5 +1,5 @@
 describe('ServerlessAWSDocumentation', function() {
-    const objectUnderTest = require('./models.js')
+    const objectUnderTest = require('../src/models.js')
 
     describe('createCfModel', () => {
         it('should replace model ref with valid URI', () => {

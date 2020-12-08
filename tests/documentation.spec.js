@@ -1,6 +1,6 @@
 describe('ServerlessAWSDocumentation', function () {
 
-  const objectUnderTest = require('./documentation.js')()
+  const objectUnderTest = require('../src/documentation.js')()
 
   beforeEach(() => {
     objectUnderTest.documentationParts = []

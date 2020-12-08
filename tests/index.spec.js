@@ -1,6 +1,6 @@
 describe('ServerlessAWSDocumentation', function () {
 
-  const ServerlessAWSDocumentation = require('./index.js');
+  const ServerlessAWSDocumentation = require('../src/index.js');
 
   beforeEach(function () {
     jasmine.addMatchers(require('jasmine-diff')(jasmine, {

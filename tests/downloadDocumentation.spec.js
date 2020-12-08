@@ -2,7 +2,7 @@ describe('ServerlessAWSDocumentation', function () {
   let objectUnderTest;
 
   beforeEach(() => {
-    objectUnderTest = require('./downloadDocumentation.js');
+    objectUnderTest = require('../src/downloadDocumentation.js');
     objectUnderTest.fs = {
       writeFileSync: jasmine.createSpy('fs')
     };
@@ -29,7 +29,7 @@ describe('ServerlessAWSDocumentation', function () {
   });
 
   afterEach(() => {
-    delete require.cache[require.resolve('./downloadDocumentation.js')];
+    delete require.cache[require.resolve('../src/downloadDocumentation.js')];
   });
 
   describe('downloadDocumentation', () => {

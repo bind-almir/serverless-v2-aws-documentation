@@ -2,8 +2,8 @@
 
 const objectHash = require('object-hash');
 
-const globalDocumentationParts = require('./globalDocumentationParts.json');
-const functionDocumentationParts = require('./functionDocumentationParts.json');
+const globalDocumentationParts = require('./documentationParts/global.json');
+const functionDocumentationParts = require('./documentationParts/function.json');
 
 function getDocumentationProperties(def, propertiesToGet) {
   const docProperties = new Map();
