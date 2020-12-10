@@ -139,7 +139,6 @@ class ServerlessV2AWSDocumentation {
                     methodDoc['methodResponses'].push(methodResponse);
                   });
                 }
-                console.log(method)
                 event.http.documentation = methodDoc
               }
             }
