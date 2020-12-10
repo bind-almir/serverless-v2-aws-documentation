@@ -1,8 +1,7 @@
 # The MIT License (MIT)
 
-
-This repository has been forked from https://github.com/deliveryhero/serverless-aws-documentation
 **Original author:**
+This repository has been forked from https://github.com/deliveryhero/serverless-aws-documentation
 Copyright © 2016 9Cookies GmbH
 
 Permission is hereby granted, free of charge, to any person
