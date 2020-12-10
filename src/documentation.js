@@ -219,35 +219,43 @@ module.exports = function() {
 
     updateCfTemplateFromHttp: function updateCfTemplateFromHttp(eventTypes) {
       if (eventTypes.http && eventTypes.http.documentation) {
-        const resourceName = this.normalizePath(eventTypes.http.path);
-        const methodLogicalId = this.getMethodLogicalId(resourceName, eventTypes.http.method);
-        const resource = this.cfTemplate.Resources[methodLogicalId];
 
-        resource.DependsOn = new Set();
-        this.addMethodResponses(resource, eventTypes.http.documentation);
-        this.addRequestModels(resource, eventTypes.http.documentation);
-        if (!this.options['doc-safe-mode']) {
-          this.addDocumentationToApiGateway(
-            resource,
-            eventTypes.http.documentation.requestHeaders,
-            'header'
-          );
-          this.addDocumentationToApiGateway(
-            resource,
-            eventTypes.http.documentation.queryParams,
-            'querystring'
-          );
-          this.addDocumentationToApiGateway(
+        const updateMethod = method => {
+          const resourceName = this.normalizePath(eventTypes.http.path);
+          const methodLogicalId = this.getMethodLogicalId(resourceName, method);
+          const resource = this.cfTemplate.Resources[methodLogicalId];  
+          resource.DependsOn = new Set();
+          this.addMethodResponses(resource, eventTypes.http.documentation);
+          this.addRequestModels(resource, eventTypes.http.documentation);
+          if (!this.options['doc-safe-mode']) {
+            this.addDocumentationToApiGateway(
               resource,
-              eventTypes.http.documentation.pathParams,
-              'path'
-          );
+              eventTypes.http.documentation.requestHeaders,
+              'header'
+            );
+            this.addDocumentationToApiGateway(
+              resource,
+              eventTypes.http.documentation.queryParams,
+              'querystring'
+            );
+            this.addDocumentationToApiGateway(
+                resource,
+                eventTypes.http.documentation.pathParams,
+                'path'
+            );
+          }
+          resource.DependsOn = Array.from(resource.DependsOn);
+          if (resource.DependsOn.length === 0) {
+            delete resource.DependsOn;
+          }
         }
-        resource.DependsOn = Array.from(resource.DependsOn);
-        if (resource.DependsOn.length === 0) {
-          delete resource.DependsOn;
-        }
+
+        // dirty fix for OPTIONS method TODO: improve
+        updateMethod('OPTIONS');
+        updateMethod(eventTypes.http.method);
+        
       }
+
     },
 
     _getDocumentationProperties: getDocumentationProperties
