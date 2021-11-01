@@ -50,10 +50,12 @@ class ServerlessV2AWSDocumentation {
         ],
         options: {
           outputFileName: {
+            type: 'string',
             required: true,
           },
           extensions: {
-              required: false,
+            type: 'string',
+            required: false,
           },
         },
       }
@@ -127,7 +129,7 @@ class ServerlessV2AWSDocumentation {
                   Object.keys(method.responses).map(statusCode => {
                     const response = method.responses[statusCode];
                     const methodResponse = {
-                      statusCode: ""+statusCode,
+                      statusCode: ''+statusCode,
                     };
 
                     if ( response.schema ) {
