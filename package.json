@@ -1,6 +1,6 @@
 {
   "name": "serverless-v2-aws-documentation",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "Serverless 2.0 plugin to add documentation and models to the serverless generated API Gateway",
   "main": "src/index.js",
   "scripts": {
