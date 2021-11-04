@@ -225,8 +225,8 @@ module.exports = function() {
           const methodLogicalId = this.getMethodLogicalId(resourceName, method);
           const resource = this.cfTemplate.Resources[methodLogicalId];  
           resource.DependsOn = new Set();
-          this.addMethodResponses(resource, eventTypes.http.documentation);
-          this.addRequestModels(resource, eventTypes.http.documentation);
+          this.addMethodResponses(resource, eventTypes.http.documentation, this._models);
+          this.addRequestModels(resource, eventTypes.http.documentation, this._models);
           if (!this.options['doc-safe-mode']) {
             this.addDocumentationToApiGateway(
               resource,
