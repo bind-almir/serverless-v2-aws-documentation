@@ -104,7 +104,11 @@ module.exports = function() {
           console.info(msg);
           return Promise.reject(msg);
         }, err => {
-          if (err.message === 'Invalid Documentation version specified') {
+          if (
+            err.providerError
+            && err.providerError.statusCode === 404
+            && err.providerError.message === 'Invalid Documentation version specified'
+          ) {
             return Promise.resolve();
           }
 
