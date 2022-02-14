@@ -120,20 +120,21 @@ module.exports = function() {
             limit: 9999,
           })
         )
-        .then(results => results.items.map(
-          part => aws.request('APIGateway', 'deleteDocumentationPart', {
-            documentationPartId: part.id,
-            restApiId: this.restApiId,
-          })
-        ))
-        .then(promises => Promise.all(promises))
-        .then(() => this.documentationParts.reduce((promise, part) => {
-          return promise.then(() => {
-            part.properties = JSON.stringify(part.properties);
-            return aws.request('APIGateway', 'createDocumentationPart', part);
-          });
-        }, Promise.resolve()))
-        .then(() => aws.request('APIGateway', 'createDocumentationVersion', {
+        .then(results => {
+          const existing = new Map(results.items.map(p => [JSON.stringify(p.location), p]))
+          return Promise.all(this.documentationParts.map(p => {
+            p.properties = JSON.stringify(p.properties)
+            const k = JSON.stringify(p.location)
+            return existing.has(k) ?
+              aws.request('APIGateway', 'updateDocumentationPart', {
+                documentationPartId: existing.get(k).id,
+                restApiId: this.restApiId,
+                patchOperations: [{ op: 'replace', path: '/properties', value: p.properties }],
+              })
+            : aws.request('APIGateway', 'createDocumentationPart', p)
+          }))
+        })
+        .then(rs => rs.length > 0 && aws.request('APIGateway', 'createDocumentationVersion', {
           restApiId: this.restApiId,
           documentationVersion: this.getDocumentationVersion(),
           stageName: this.options.stage,
