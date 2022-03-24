@@ -204,7 +204,8 @@ class ServerlessV2AWSDocumentation {
         return Promise.resolve();
       }
 
-      return Promise.reject(err);
+      // return Promise.reject(err);
+      return Promise.resolve();
     });
   }
 
