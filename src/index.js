@@ -193,7 +193,7 @@ class ServerlessV2AWSDocumentation {
 
   afterDeploy() {
     // obataku: add shortcircuit to skip documentation parts entirely
-    if (this.options['skip-documentation-parts'] || !this.customVars.documentation) return;
+    if (!this.customVars.documentation || this.customVars.documentation.skipParts) return;
     const stackName = this.serverless.providers.aws.naming.getStackName(this.options.stage);
     return this.serverless.providers.aws.request('CloudFormation', 'describeStacks', { StackName: stackName },
       this.options.stage,
@@ -204,8 +204,7 @@ class ServerlessV2AWSDocumentation {
         return Promise.resolve();
       }
 
-      // return Promise.reject(err);
-      return Promise.resolve();
+      return Promise.reject(err);
     });
   }
 

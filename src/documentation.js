@@ -121,7 +121,8 @@ module.exports = function() {
           })
         )
         .then(results => {
-          const existing = new Map(results.items.map(p => [JSON.stringify(p.location), p]))
+          const stringify = o => JSON.stringify(o, Object.keys(o).sort())
+          const existing = new Map(results.items.map(p => [stringify(p.location), p]))
           return Promise.all(this.documentationParts.map(p => {
             p.properties = JSON.stringify(p.properties)
             const k = JSON.stringify(p.location)
