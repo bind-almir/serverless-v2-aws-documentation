@@ -229,8 +229,8 @@ module.exports = function() {
         const updateMethod = method => {
           const resourceName = this.normalizePath(eventTypes.http.path);
           const methodLogicalId = this.getMethodLogicalId(resourceName, method);
-          const resource = this.cfTemplate.Resources[methodLogicalId];  
-          resource.DependsOn = new Set();
+          const resource = this.cfTemplate.Resources[methodLogicalId];
+          resource.DependsOn = resource.DependsOn ? new Set(resource.DependsOn) : new Set();
           this.addMethodResponses(resource, eventTypes.http.documentation, this._models);
           this.addRequestModels(resource, eventTypes.http.documentation, this._models);
           if (!this.options['doc-safe-mode']) {
@@ -245,9 +245,9 @@ module.exports = function() {
               'querystring'
             );
             this.addDocumentationToApiGateway(
-                resource,
-                eventTypes.http.documentation.pathParams,
-                'path'
+              resource,
+              eventTypes.http.documentation.pathParams,
+              'path'
             );
           }
           resource.DependsOn = Array.from(resource.DependsOn);
