@@ -1,6 +1,6 @@
 'use strict';
 
-function replaceModelRefs(restApiId, cfModel) {
+function replaceModelRefs(restApiId, cfModel, models) {
     if (!cfModel.Properties || !cfModel.Properties.Schema || Object.keys(cfModel.Properties.Schema).length == 0) {
       return cfModel;
     }
@@ -21,10 +21,16 @@ function replaceModelRefs(restApiId, cfModel) {
                             ]
                         ]
                     };
-                    if (!cfModel.DependsOn) {
-                        cfModel.DependsOn = new Set();
+
+                    const name = match[1];
+                    const model = models[name];
+                    if (!model) throw new Error(`unrecognized model: ${name}`);
+                    if (model.managed !== false) {
+                        if (!cfModel.DependsOn) {
+                            cfModel.DependsOn = new Set();
+                        }
+                        cfModel.DependsOn.add(name + 'Model');
                     }
-                    cfModel.DependsOn.add(match[1]+'Model');
                 }
             } else if (typeof obj[key] === 'object' && obj[key] !== null) {
                 replaceRefs(obj[key]);
@@ -40,8 +46,10 @@ function replaceModelRefs(restApiId, cfModel) {
 }
 
 module.exports = {
-  createCfModel: function createCfModel(restApiId) {
+  createCfModel: function createCfModel(restApiId, models) {
     return function(model) {
+
+      if (model.managed === false) return null
 
       let cfModel = {
         Type: 'AWS::ApiGateway::Model',
@@ -57,17 +65,20 @@ module.exports = {
         cfModel.Properties.Description = model.description
       }
 
-      return replaceModelRefs(restApiId, cfModel)
+      return replaceModelRefs(restApiId, cfModel, models)
     }
   },
 
-  addModelDependencies: function addModelDependencies(models, resource) {
+  addModelDependencies: function addModelDependencies(models, resource, _models) {
     Object.keys(models).forEach(contentType => {
-      resource.DependsOn.add(`${models[contentType]}Model`);
+      const name = models[contentType];
+      const model = _models[name];
+      if (!model) throw new Error(`unrecognized model: ${name}`);
+      if (model.managed !== false) resource.DependsOn.add(`${name}Model`);
     });
   },
 
-  addMethodResponses: function addMethodResponses(resource, documentation) {
+  addMethodResponses: function addMethodResponses(resource, documentation, models) {
     if (documentation.methodResponses) {
       if (!resource.Properties.MethodResponses) {
         resource.Properties.MethodResponses = [];
@@ -96,15 +107,15 @@ module.exports = {
 
         if (response.responseModels) {
           _response.ResponseModels = response.responseModels;
-          this.addModelDependencies(_response.ResponseModels, resource);
+          this.addModelDependencies(_response.ResponseModels, resource, models);
         }
       });
     }
   },
 
-  addRequestModels: function addRequestModels(resource, documentation) {
+  addRequestModels: function addRequestModels(resource, documentation, models) {
     if (documentation.requestModels && Object.keys(documentation.requestModels).length > 0) {
-      this.addModelDependencies(documentation.requestModels, resource);
+      this.addModelDependencies(documentation.requestModels, resource, models);
       resource.Properties.RequestModels = documentation.requestModels;
     }
   }

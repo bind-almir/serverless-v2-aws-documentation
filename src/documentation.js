@@ -104,7 +104,11 @@ module.exports = function() {
           console.info(msg);
           return Promise.reject(msg);
         }, err => {
-          if (err.message === 'Invalid Documentation version specified') {
+          if (
+            err.providerError
+            && err.providerError.statusCode === 404
+            && err.providerError.message === 'Invalid Documentation version specified'
+          ) {
             return Promise.resolve();
           }
 
@@ -116,20 +120,22 @@ module.exports = function() {
             limit: 9999,
           })
         )
-        .then(results => results.items.map(
-          part => aws.request('APIGateway', 'deleteDocumentationPart', {
-            documentationPartId: part.id,
-            restApiId: this.restApiId,
-          })
-        ))
-        .then(promises => Promise.all(promises))
-        .then(() => this.documentationParts.reduce((promise, part) => {
-          return promise.then(() => {
-            part.properties = JSON.stringify(part.properties);
-            return aws.request('APIGateway', 'createDocumentationPart', part);
-          });
-        }, Promise.resolve()))
-        .then(() => aws.request('APIGateway', 'createDocumentationVersion', {
+        .then(results => {
+          const stringify = o => JSON.stringify(o, Object.keys(o).sort())
+          const existing = new Map(results.items.map(p => [stringify(p.location), p]))
+          return Promise.all(this.documentationParts.map(p => {
+            p.properties = JSON.stringify(p.properties)
+            const k = JSON.stringify(p.location)
+            return existing.has(k) ?
+              aws.request('APIGateway', 'updateDocumentationPart', {
+                documentationPartId: existing.get(k).id,
+                restApiId: this.restApiId,
+                patchOperations: [{ op: 'replace', path: '/properties', value: p.properties }],
+              })
+            : aws.request('APIGateway', 'createDocumentationPart', p)
+          }))
+        })
+        .then(rs => rs.length > 0 && aws.request('APIGateway', 'createDocumentationVersion', {
           restApiId: this.restApiId,
           documentationVersion: this.getDocumentationVersion(),
           stageName: this.options.stage,
@@ -223,10 +229,10 @@ module.exports = function() {
         const updateMethod = method => {
           const resourceName = this.normalizePath(eventTypes.http.path);
           const methodLogicalId = this.getMethodLogicalId(resourceName, method);
-          const resource = this.cfTemplate.Resources[methodLogicalId];  
-          resource.DependsOn = new Set();
-          this.addMethodResponses(resource, eventTypes.http.documentation);
-          this.addRequestModels(resource, eventTypes.http.documentation);
+          const resource = this.cfTemplate.Resources[methodLogicalId];
+          resource.DependsOn = resource.DependsOn ? new Set(resource.DependsOn) : new Set();
+          this.addMethodResponses(resource, eventTypes.http.documentation, this._models);
+          this.addRequestModels(resource, eventTypes.http.documentation, this._models);
           if (!this.options['doc-safe-mode']) {
             this.addDocumentationToApiGateway(
               resource,
@@ -239,9 +245,9 @@ module.exports = function() {
               'querystring'
             );
             this.addDocumentationToApiGateway(
-                resource,
-                eventTypes.http.documentation.pathParams,
-                'path'
+              resource,
+              eventTypes.http.documentation.pathParams,
+              'path'
             );
           }
           resource.DependsOn = Array.from(resource.DependsOn);

@@ -162,12 +162,17 @@ class ServerlessV2AWSDocumentation {
     }
 
     if (this.customVars.documentation.models) {
-      const cfModelCreator = this.createCfModel(restApiId);
+      this._models = this.customVars.documentation.models.reduce((acc, m) => {
+        acc[m.name] = m;
+        return acc;
+      }, {});
+
+      const cfModelCreator = this.createCfModel(restApiId, this._models);
 
       // Add model resources
       const models = this.customVars.documentation.models.map(cfModelCreator)
         .reduce((modelObj, model) => {
-          modelObj[`${model.Properties.Name}Model`] = model;
+          if (model) modelObj[`${model.Properties.Name}Model`] = model;
           return modelObj;
         }, {});
       Object.assign(this.cfTemplate.Resources, models);
@@ -187,7 +192,8 @@ class ServerlessV2AWSDocumentation {
   }
 
   afterDeploy() {
-    if (!this.customVars.documentation) return;
+    // obataku: add shortcircuit to skip documentation parts entirely
+    if (!this.customVars.documentation || this.customVars.documentation.skipParts) return;
     const stackName = this.serverless.providers.aws.naming.getStackName(this.options.stage);
     return this.serverless.providers.aws.request('CloudFormation', 'describeStacks', { StackName: stackName },
       this.options.stage,
